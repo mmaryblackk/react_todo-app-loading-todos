@@ -24,17 +24,23 @@ export const App: React.FC = () => {
   );
   const [filterField, setFilterField] = useState(FilterOption.all);
 
-  useEffect(() => {
+  const loadData = () => {
     setLoading(true);
     getTodos()
       .then(setTodos)
       .catch(() => {
         setErrorMessage(ErrorType.loading);
-        setTimeout(() => {
+        const timeoutId = setTimeout(() => {
           setErrorMessage(ErrorType.noError);
         }, 3000);
+
+        return () => clearTimeout(timeoutId);
       })
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
 
   const filteredTodos = todos.filter(
